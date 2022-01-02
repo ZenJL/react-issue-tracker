@@ -3,6 +3,11 @@
   padding: 20px;
 }
 
+.btn-submit.btn.btn-primary.disabled {
+  background-color: rgba(49, 48, 48, 0.438);
+  border-color: rgba(49, 48, 48, 0.438);
+}
+
 .container {
   display: flex;
   flex-direction: column;

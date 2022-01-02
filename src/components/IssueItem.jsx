@@ -2,12 +2,16 @@ import React from 'react'
 
 import { Card, CardHeader, CardBody, CardTitle, Button, Badge } from 'reactstrap';
 
+// context
+import { useIssueContext } from '../context/issueContext';
 
-function ListItem({todos, deleteIssue}) {
-    console.log('list item dos: ', todos)
+
+function IssueItem() {
+    const { issuesFiltered, deleteIssue, setIssueStatus, issueStatus } = useIssueContext();
+
     return (
         <>
-            {todos.map(issue => (
+            {issuesFiltered.map(issue => (
                 <Card className='listItem' key={issue.id}>
                     <CardHeader>
                         {issue.id}
@@ -21,10 +25,10 @@ function ListItem({todos, deleteIssue}) {
                         <CardTitle tag="h5">
                             {issue.description}
                         </CardTitle>
-                        <div className="btn-card-group"
-                            offset='true'
-                        >
-                            <Button color='primary'>
+                        <div className="btn-card-group" offset='true'>
+                            <Button color='primary'
+                                onClick={() => setIssueStatus(prev => console.log(!prev))}
+                            >
                                 Close
                             </Button>
                             <Button
@@ -43,4 +47,4 @@ function ListItem({todos, deleteIssue}) {
     )
 }
 
-export default ListItem
+export default IssueItem;
