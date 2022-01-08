@@ -1,13 +1,29 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import { Card, CardHeader, CardBody, CardTitle, Button, Badge } from 'reactstrap';
 
+// context
+import { useIssueContext } from '../context/issueContext';
 
-function ListItem({todos, deleteIssue}) {
-    console.log('list item dos: ', todos)
+
+function IssueItem() {
+    const { issuesFiltered, deleteIssue, updateIssue } = useIssueContext();
+
+
     return (
         <>
-            {todos.map(issue => (
+            {issuesFiltered.map(issue => {
+                // console.log('tung issue: ', issue)
+                let newStatus = '';
+                if(issue.status === 'new') {
+                    newStatus = 'close';
+                }
+                if(issue.status === 'close') {
+                    newStatus = 'new';
+                }
+                // console.log('day la: ', newStatus)
+                
+                return (
                 <Card className='listItem' key={issue.id}>
                     <CardHeader>
                         {issue.id}
@@ -21,11 +37,11 @@ function ListItem({todos, deleteIssue}) {
                         <CardTitle tag="h5">
                             {issue.description}
                         </CardTitle>
-                        <div className="btn-card-group"
-                            offset='true'
-                        >
-                            <Button color='primary'>
-                                Close
+                        <div className="btn-card-group" offset='true'>
+                            <Button color='primary'
+                                onClick={() => updateIssue(issue.id, issue, newStatus)}
+                            >
+                                {issue.status === 'new' ? "Close" : "Open"}
                             </Button>
                             <Button
                                 color='danger'
@@ -37,10 +53,10 @@ function ListItem({todos, deleteIssue}) {
                         
                     </CardBody>
                 </Card>
-            ))}
+            )})}
             
         </>
     )
 }
 
-export default ListItem
+export default IssueItem;

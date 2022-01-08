@@ -1,9 +1,27 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 
 import { FormGroup, Label, Col, Input, Button, ButtonGroup } from 'reactstrap';
-import ListItem from './ListItem';
+import IssueItem from './IssueItem';
 
-function IssueList({todos, deleteIssue}) {
+// context
+import { useIssueContext } from '../context/issueContext';
+
+function IssueList() {
+    const { textSearch, setTextSearch, setOrderBy, setFilterBy, useDebounce } = useIssueContext();
+
+    const debouncedValue = useDebounce(textSearch);
+  
+    useEffect(() => {
+        if(debouncedValue) {
+            setTextSearch(textSearch);
+        }
+        // console.log('how many times: ',textSearch)
+    }, [debouncedValue])
+    // console.log('how many: ',textSearch)
+
+
+
+
     return (
         <div className='issueList'>
             <div className="list-header" row>
@@ -12,57 +30,60 @@ function IssueList({todos, deleteIssue}) {
                     <Input
                         type="search"
                         placeholder="Search by description... "
+                        onChange={e => setTextSearch(e.target.value)}
+                        // value={useDebounce(textSearch)}
                     />
                 </Col>
             </div>
 
             <FormGroup row>
-                    <Label
-                        for="severity"
-                        sm={2}
+                <Label
+                    for="severity"
+                    sm={2}
+                >
+                    Filter: 
+                </Label>
+                <Col sm={2}>
+                    <ButtonGroup className='btn-group'>
+                        <Button color='primary' onClick={() => setFilterBy('all')}>
+                            All
+                        </Button>
+                        <Button color='success' onClick={() => setFilterBy('new')}>
+                            New
+                        </Button>
+                        <Button onClick={() => setFilterBy('close')}>
+                            Close
+                        </Button>
+                    </ButtonGroup>
+                </Col>
+            </FormGroup>
+        
+            <FormGroup row>
+                <Label
+                    for="severity"
+                    sm={2}
+                >
+                    Order By:
+                </Label>
+                <Col sm={2}>
+                    <Input
+                        id="severity"
+                        name="severity"
+                        type="select"
+                        onChange={e => setOrderBy(e.target.value)}
                     >
-                        Filter: 
-                    </Label>
-                    <Col sm={2}>
-                        <ButtonGroup className='btn-group'>
-                            <Button color='primary'>
-                                All
-                            </Button>
-                            <Button color='success'>
-                                Open
-                            </Button>
-                            <Button>
-                                Close
-                            </Button>
-                        </ButtonGroup>
-                    </Col>
-                </FormGroup>
-            
-                <FormGroup row>
-                    <Label
-                        for="severity"
-                        sm={2}
-                    >
-                        Order By:
-                    </Label>
-                    <Col sm={2}>
-                        <Input
-                            id="severity"
-                            name="severity"
-                            type="select"
-                        >
-                            <option>
-                                ASC
-                            </option>
-                            <option>
-                                DESC
-                            </option>
-                        </Input>
-                    </Col>
-                </FormGroup>
+                        <option value="asc">
+                            ASC
+                        </option>
+                        <option value="desc">
+                            DESC
+                        </option>
+                    </Input>
+                </Col>
+            </FormGroup>
 
 
-                <ListItem todos={todos} deleteIssue={deleteIssue}/>
+            <IssueItem />
         </div>
     )
 }
