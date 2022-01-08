@@ -14,7 +14,6 @@ const IssueProvider = ({ children }) => {
   const [orderBy, setOrderBy] = useState('asc');
   const [filterBy, setFilterBy] = useState('all');
 
-  const [issueStatus, setIssueStatus] = useState(false);
 
   // fetch issues
   useEffect(() => {
@@ -45,8 +44,13 @@ const IssueProvider = ({ children }) => {
       .sort((m1, m2) => {
         // if(orderBy === 'asc') return m2.description - m1.description;
         // return m1.description - m2.description
-        if(orderBy === 'asc') return m2.createdAt - m1.createdAt;
-        return m1.createdAt - m2.createdAt;
+        if(orderBy === 'asc' && m1.description < m2.description) {
+          return -1;
+        }
+        if(orderBy === 'desc' && m1.description > m2.description) {
+          return -1;
+        }
+        // return 1;
       })
 
     setIssuesFiltered(newIssues)
@@ -58,6 +62,24 @@ const IssueProvider = ({ children }) => {
       const res = await httpRequest.post('https://tony-json-server.herokuapp.com/api/todos', issue);
       const data = res.data.data;
       setIssues(prevState => [data, ...prevState])
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // update issue
+  async function updateIssue(issueId, issue, newStatus) {
+    try {
+      const res = await httpRequest.patch(`https://tony-json-server.herokuapp.com/api/todos/${issueId}`, {
+        ...issue,
+        status: newStatus,
+      });
+      const data = res.data.data;
+      const newIssues = [...issues];
+      const issueIndex = newIssues.findIndex(issue => issue.id === issueId);
+      newIssues.splice(issueIndex, 1, data);
+      // console.log('day la data moi: ', data);
+      setIssues(newIssues);
     } catch (error) {
       console.error(error);
     }
@@ -76,6 +98,25 @@ const IssueProvider = ({ children }) => {
     }
   }
 
+  // create debounce for search field
+  const useDebounce = (text, delay = 700) => {
+    const [debounced, setDebounced] = useState(text);
+
+    useEffect(() => {
+      const handler = setTimeout(() => {
+        setDebounced(text)
+      }, delay);
+
+      // clean effect
+      return () => {
+        clearTimeout(handler)
+      }
+    }, [text, delay])
+
+    return debounced;
+  };
+
+
 
 
   return (
@@ -83,13 +124,14 @@ const IssueProvider = ({ children }) => {
       value={{
         issues,
         issuesFiltered,
-        issueStatus,
+        textSearch,
         addIssue,
         deleteIssue,
         setTextSearch,
         setOrderBy,
         setFilterBy,
-        setIssueStatus
+        updateIssue,
+        useDebounce,
       }}
     >
       {children}

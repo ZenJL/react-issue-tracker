@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 
 import { FormGroup, Label, Col, Input, Button, ButtonGroup } from 'reactstrap';
 import IssueItem from './IssueItem';
@@ -7,7 +7,20 @@ import IssueItem from './IssueItem';
 import { useIssueContext } from '../context/issueContext';
 
 function IssueList() {
-    const { setTextSearch, setOrderBy, setFilterBy } = useIssueContext();
+    const { textSearch, setTextSearch, setOrderBy, setFilterBy, useDebounce } = useIssueContext();
+
+    const debouncedValue = useDebounce(textSearch);
+  
+    useEffect(() => {
+        if(debouncedValue) {
+            setTextSearch(textSearch);
+        }
+        // console.log('how many times: ',textSearch)
+    }, [debouncedValue])
+    // console.log('how many: ',textSearch)
+
+
+
 
     return (
         <div className='issueList'>
@@ -18,6 +31,7 @@ function IssueList() {
                         type="search"
                         placeholder="Search by description... "
                         onChange={e => setTextSearch(e.target.value)}
+                        // value={useDebounce(textSearch)}
                     />
                 </Col>
             </div>

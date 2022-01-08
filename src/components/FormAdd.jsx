@@ -35,7 +35,7 @@ function FormAdd() {
             id: uuidv4(),
           }
         });
-        console.log('ur form: ', form);
+        // console.log('ur form: ', form);
     };
 
     // handle submit

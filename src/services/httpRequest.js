@@ -9,6 +9,10 @@ class HttpRequest {
     return axios.post(url, data, options);
   };
 
+  async patch(url, data, options = {}) {
+    return axios.patch(url, data, options);
+  };
+
   async delete(url, options = {}) {
     return axios.delete(url, {
       ...options,

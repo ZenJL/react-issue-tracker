@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import { Card, CardHeader, CardBody, CardTitle, Button, Badge } from 'reactstrap';
 
@@ -7,11 +7,23 @@ import { useIssueContext } from '../context/issueContext';
 
 
 function IssueItem() {
-    const { issuesFiltered, deleteIssue, setIssueStatus, issueStatus } = useIssueContext();
+    const { issuesFiltered, deleteIssue, updateIssue } = useIssueContext();
+
 
     return (
         <>
-            {issuesFiltered.map(issue => (
+            {issuesFiltered.map(issue => {
+                // console.log('tung issue: ', issue)
+                let newStatus = '';
+                if(issue.status === 'new') {
+                    newStatus = 'close';
+                }
+                if(issue.status === 'close') {
+                    newStatus = 'new';
+                }
+                // console.log('day la: ', newStatus)
+                
+                return (
                 <Card className='listItem' key={issue.id}>
                     <CardHeader>
                         {issue.id}
@@ -27,9 +39,9 @@ function IssueItem() {
                         </CardTitle>
                         <div className="btn-card-group" offset='true'>
                             <Button color='primary'
-                                onClick={() => setIssueStatus(prev => console.log(!prev))}
+                                onClick={() => updateIssue(issue.id, issue, newStatus)}
                             >
-                                Close
+                                {issue.status === 'new' ? "Close" : "Open"}
                             </Button>
                             <Button
                                 color='danger'
@@ -41,7 +53,7 @@ function IssueItem() {
                         
                     </CardBody>
                 </Card>
-            ))}
+            )})}
             
         </>
     )
